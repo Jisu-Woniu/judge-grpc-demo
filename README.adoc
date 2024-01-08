@@ -1,0 +1,40 @@
+= Judge-gRPC-Demo
+Jisu-Woniu
+:toc: preamble
+:toc-title: 目录
+:nofooter:
+
+一个使用 gRPC Server Stream 返回测试点信息以及汇总结果的样例项目。
+
+== 项目结构
+
+proto::
+    ProtoBuf 文件目录，是一个 buf 项目，用于生成 gRPC 服务端和客户端代码。
+src::
+    Rust 项目目录，包含 gRPC 服务端和客户端代码以及共享的配置信息。
+
+gRPC 相关类型的 Rust 代码会在编译时自动生成到 `target/*/build/judge-grpc-demo-*/out` 目录下，无需手动生成或编写。
+
+== 项目依赖
+
+* Rust 最新稳定版
+* protoc，可参照 https://github.com/hyperium/tonic/#dependencies[tonic 的文档]安装
+* buf（可选，用于检查与格式化 ProtoBuf 文件）
+
+== 项目运行
+
+=== 服务端
+
+[,bash]
+----
+cargo run --bin judge-grpc-server
+----
+
+=== 客户端
+
+启动服务端后，运行以下命令。
+
+[,bash]
+----
+cargo run --bin judge-grpc-client
+----
