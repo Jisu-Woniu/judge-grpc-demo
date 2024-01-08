@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package judge.v1;
+
+// The judging service definition.
+service JudgeService {
+  // Sends a judge request
+  rpc Judge(JudgeRequest) returns (stream JudgeResponse);
+}
+
+// The request containing the user's code and judge info.
+message JudgeRequest {
+  string language = 1;
+  string code = 2;
+  // We only showed part of the fields.
+}
+
+enum JudgeType {
+  JUDGE_TYPE_UNSPECIFIED = 0;
+  JUDGE_TYPE_SELF_TEST = 1;
+  JUDGE_TYPE_SUBMIT = 2;
+}
+
+// The response message containing the judge results.
+message JudgeResponse {
+  oneof response_type {
+    CompileInfo compile_info = 1;
+    CaseInfo case_info = 2;
+    SelfTestSummary self_test_summary = 3;
+    CasesSummary cases_summary = 4;
+  }
+}
+
+message CompileInfo {
+  int32 exit_status = 1;
+  string message = 2;
+}
+
+message CaseInfo {
+  int32 case_id = 1;
+  int32 exit_status = 2;
+  JudgeResult result = 3;
+  int32 score = 4;
+}
+
+message SelfTestSummary {
+  int32 exit_status = 1;
+  string stdout = 2;
+  string stderr = 3;
+}
+
+message CasesSummary {
+  JudgeResult result = 1;
+  int32 score = 2;
+}
+
+enum JudgeResult {
+  JUDGE_RESULT_UNSPECIFIED = 0;
+  JUDGE_RESULT_ACCEPTED = 1;
+  JUDGE_RESULT_WRONG_ANSWER = 2;
+  JUDGE_RESULT_RUNTIME_ERROR = 3;
+}
