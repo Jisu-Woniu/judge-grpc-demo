@@ -16,6 +16,7 @@ async fn main() -> anyhow::Result<()> {
         .judge(JudgeRequest {
             language: "c".into(),
             code: "int main() { return 0; }".into(),
+            test_case_id: 1,
         })
         .await?
         .into_inner();
@@ -30,9 +31,6 @@ async fn main() -> anyhow::Result<()> {
             }
             ResponseType::CaseInfo(case_info) => {
                 println!("Got case info: {:#?}", case_info)
-            }
-            ResponseType::SelfTestSummary(self_test_summary) => {
-                println!("Got self test summary: {:#?}", self_test_summary)
             }
             ResponseType::CasesSummary(cases_summary) => {
                 println!("Got cases summary: {:#?}", cases_summary)

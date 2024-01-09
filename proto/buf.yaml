@@ -5,3 +5,4 @@ breaking:
 lint:
   use:
     - DEFAULT
+    - COMMENTS

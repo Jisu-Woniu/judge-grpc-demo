@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use shared::judge::{SelfTestRequest, SelfTestResponse};
 use tokio::{
     spawn,
     sync::mpsc::{channel, error::SendError},
@@ -24,6 +25,15 @@ struct MyJudgeServiceServer;
 
 #[async_trait]
 impl JudgeService for MyJudgeServiceServer {
+    type SelfTestStream = ReceiverStream<Result<SelfTestResponse, Status>>;
+
+    async fn self_test(
+        &self,
+        _request: Request<SelfTestRequest>,
+    ) -> Result<Response<Self::SelfTestStream>, Status> {
+        Err(Status::unimplemented("unimplemented"))
+    }
+
     type JudgeStream = ReceiverStream<Result<JudgeResponse, Status>>;
 
     async fn judge(
@@ -41,7 +51,8 @@ impl JudgeService for MyJudgeServiceServer {
             tx.send(Ok(JudgeResponse {
                 response_type: Some(ResponseType::CompileInfo(CompileInfo {
                     exit_status: 0,
-                    message: "Compile suceeded".to_string(),
+                    stdout: String::new(),
+                    stderr: String::new(),
                 })),
             }))
             .await?;
