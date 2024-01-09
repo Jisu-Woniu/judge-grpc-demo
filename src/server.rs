@@ -11,9 +11,11 @@ use tonic::{async_trait, transport::Server, Request, Response, Status};
 
 use crate::shared::{
     judge::{
-        judge_response::ResponseType,
+        judge_response::JudgeResponseType,
         judge_service_server::{JudgeService, JudgeServiceServer},
+        self_test_response::SelfTestResponseType,
         CaseInfo, CasesSummary, CompileInfo, JudgeRequest, JudgeResponse, JudgeResult,
+        SelfTestSummary,
     },
     SERVER_ADDRESS,
 };
@@ -29,9 +31,40 @@ impl JudgeService for MyJudgeServiceServer {
 
     async fn self_test(
         &self,
-        _request: Request<SelfTestRequest>,
+        request: Request<SelfTestRequest>,
     ) -> Result<Response<Self::SelfTestStream>, Status> {
-        Err(Status::unimplemented("unimplemented"))
+        println!("Got a request: {:#?}", request);
+        let data = request.into_inner();
+        println!("Request data: {:#?}", data);
+
+        let (tx, rx) = channel(5);
+
+        spawn(async move {
+            // Mocking compilation process.
+            sleep(Duration::from_secs(2)).await;
+            tx.send(Ok(SelfTestResponse {
+                self_test_response_type: Some(SelfTestResponseType::CompileInfo(CompileInfo {
+                    exit_status: 0,
+                    stdout: String::new(),
+                    stderr: String::new(),
+                })),
+            }))
+            .await?;
+
+            // Mocking running.
+            sleep(Duration::from_secs(2)).await;
+            tx.send(Ok(SelfTestResponse {
+                self_test_response_type: Some(SelfTestResponseType::Summary(SelfTestSummary {
+                    exit_status: 0,
+                    stdout: String::new(),
+                    stderr: String::new(),
+                })),
+            }))
+            .await?;
+
+            Ok::<(), SendError<Result<SelfTestResponse, Status>>>(())
+        });
+        Ok(Response::new(Self::SelfTestStream::new(rx)))
     }
 
     type JudgeStream = ReceiverStream<Result<JudgeResponse, Status>>;
@@ -41,15 +74,16 @@ impl JudgeService for MyJudgeServiceServer {
         request: Request<JudgeRequest>,
     ) -> Result<Response<Self::JudgeStream>, Status> {
         println!("Got a request: {:#?}", request);
-        let request = request.into_inner();
-        println!("Request data: {:#?}", request);
+        let data = request.into_inner();
+        println!("Request data: {:#?}", data);
 
         let (tx, rx) = channel(5);
 
         spawn(async move {
+            // Mocking compilation process.
             sleep(Duration::from_secs(2)).await;
             tx.send(Ok(JudgeResponse {
-                response_type: Some(ResponseType::CompileInfo(CompileInfo {
+                judge_response_type: Some(JudgeResponseType::CompileInfo(CompileInfo {
                     exit_status: 0,
                     stdout: String::new(),
                     stderr: String::new(),
@@ -58,9 +92,10 @@ impl JudgeService for MyJudgeServiceServer {
             .await?;
 
             for i in 1..4 {
+                // Mocking running.
                 sleep(Duration::from_secs(2)).await;
                 tx.send(Ok(JudgeResponse {
-                    response_type: Some(ResponseType::CaseInfo(CaseInfo {
+                    judge_response_type: Some(JudgeResponseType::CaseInfo(CaseInfo {
                         case_id: i,
                         exit_status: 0,
                         score: 100,
@@ -71,7 +106,7 @@ impl JudgeService for MyJudgeServiceServer {
             }
 
             tx.send(Ok(JudgeResponse {
-                response_type: Some(ResponseType::CasesSummary(CasesSummary {
+                judge_response_type: Some(JudgeResponseType::CasesSummary(CasesSummary {
                     result: JudgeResult::Accepted.into(),
                     score: 100,
                 })),

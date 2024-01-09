@@ -23,7 +23,7 @@ message SelfTestRequest {
 // The response message containing the self-test results.
 message SelfTestResponse {
   // The type of the response.
-  oneof response_type {
+  oneof self_test_response_type {
     // Message indicating the compile result.
     CompileInfo compile_info = 1;
     // Message indicating the self-test result.
@@ -76,7 +76,7 @@ message JudgeRequest {
 // The response message containing the judge results.
 message JudgeResponse {
   // The type of the response.
-  oneof response_type {
+  oneof judge_response_type {
     // Message indicating the compile result.
     CompileInfo compile_info = 1;
     // Message indicating the single case judge result.
