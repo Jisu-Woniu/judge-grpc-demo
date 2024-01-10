@@ -1,0 +1,25 @@
+name: Sync with Buf Schema Registry
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  sync-protos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ github.token }}
+      - name: Lint proto files
+        uses: bufbuild/buf-lint-action@v1
+        with:
+          input: "proto"
+      - name: Push to Buf Schema Registry
+        uses: bufbuild/buf-push-action@v1
+        with:
+          input: "proto"
+          buf_token: ${{ secrets.BUF_TOKEN }}
