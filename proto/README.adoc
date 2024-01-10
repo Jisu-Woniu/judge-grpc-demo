@@ -1,0 +1,5 @@
+= ProtoBuf for Judge-gRPC-Demo
+
+此目录为 Judge-gRPC-Demo 的 ProtoBuf 文件目录，使用 buf 作为管理工具，同时托管在 https://buf.build/jisu-woniu/judge-grpc-demo[Buf Schema Registry] 上。
+
+https://buf.build/jisu-woniu/judge-grpc-demo[Buf Schema Registry] 上的副本会 xref:../.github/workflows/sync-bsr.yaml[通过 GitHub Actions 自动更新]。
