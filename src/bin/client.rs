@@ -3,19 +3,21 @@ use tokio_stream::StreamExt;
 
 use crate::shared::{
     judge::{
-        judge_response::JudgeResponseType, judge_service_client::JudgeServiceClient,
-        self_test_response::SelfTestResponseType, JudgeRequest, SelfTestRequest,
+        judge_service_client::JudgeServiceClient, self_test_response::SelfTestResponseType,
+        submit_response::SubmitResponseType, SelfTestRequest, SubmitRequest,
     },
     SERVER_ADDRESS,
 };
 
+#[path = "../shared.rs"]
 pub mod shared;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    println!("Hello from client");
     let mut client = JudgeServiceClient::connect(format!("http://{}", SERVER_ADDRESS)).await?;
+    println!("Connected to server: {:#?}", client);
 
+    println!("---- Start self test ----");
     let mut self_test_response = client
         .self_test(SelfTestRequest {
             language: "c".into(),
@@ -37,8 +39,10 @@ async fn main() -> anyhow::Result<()> {
         }
     }
 
-    let mut judge_response = client
-        .judge(JudgeRequest {
+    println!("---- Start submission ----");
+
+    let mut submit_response = client
+        .submit(SubmitRequest {
             language: "c".into(),
             code: "int main() { return 0; }".into(),
             test_case_id: 114514,
@@ -46,18 +50,18 @@ async fn main() -> anyhow::Result<()> {
         .await?
         .into_inner();
 
-    while let Some(message) = judge_response.next().await {
+    while let Some(message) = submit_response.next().await {
         match message?
-            .judge_response_type
+            .submit_response_type
             .ok_or(anyhow!("Expect `response_type` not empty"))?
         {
-            JudgeResponseType::CompileInfo(compile_info) => {
+            SubmitResponseType::CompileInfo(compile_info) => {
                 println!("Got compile info: {:#?}", compile_info)
             }
-            JudgeResponseType::CaseInfo(case_info) => {
+            SubmitResponseType::CaseInfo(case_info) => {
                 println!("Got case info: {:#?}", case_info)
             }
-            JudgeResponseType::CasesSummary(cases_summary) => {
+            SubmitResponseType::CasesSummary(cases_summary) => {
                 println!("Got cases summary: {:#?}", cases_summary)
             }
         }

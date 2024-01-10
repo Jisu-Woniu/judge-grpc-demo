@@ -7,7 +7,7 @@ service JudgeService {
   // Sends a self-test request.
   rpc SelfTest(SelfTestRequest) returns (stream SelfTestResponse);
   // Sends a judge request.
-  rpc Judge(JudgeRequest) returns (stream JudgeResponse);
+  rpc Submit(SubmitRequest) returns (stream SubmitResponse);
 }
 
 // The request of self-test info, containing user's code and input.
@@ -62,7 +62,7 @@ message SelfTestSummary {
 // The request containing the user's code and judge info.
 //
 // We only showed part of the fields.
-message JudgeRequest {
+message SubmitRequest {
   // The language of the code.
   string language = 1;
   // The code to be judged.
@@ -74,9 +74,9 @@ message JudgeRequest {
 }
 
 // The response message containing the judge results.
-message JudgeResponse {
+message SubmitResponse {
   // The type of the response.
-  oneof judge_response_type {
+  oneof submit_response_type {
     // Message indicating the compile result.
     CompileInfo compile_info = 1;
     // Message indicating the single case judge result.

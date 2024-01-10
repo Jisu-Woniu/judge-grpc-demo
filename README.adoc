@@ -27,7 +27,7 @@ gRPC 相关类型的 Rust 代码会在编译时自动生成到 `+target/*/build/
 
 [,bash]
 ----
-cargo run --bin judge-grpc-server
+cargo run --bin server
 ----
 
 === 客户端
@@ -36,5 +36,5 @@ cargo run --bin judge-grpc-server
 
 [,bash]
 ----
-cargo run --bin judge-grpc-client
+cargo run --bin client
 ----
