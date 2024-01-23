@@ -20,6 +20,8 @@ jobs:
           channel: stable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v2
       - name: Build
         run: cargo build --release
       - name: Upload artifact
@@ -27,5 +29,6 @@ jobs:
         with:
           name: ${{ matrix.os }}-release
           path: |
-            target/release/judge-grpc-server(.exe)?
-            target/release/judge-grpc-client(.exe)?
+            ${{ github.workspace }}/target/release/judge-grpc-server*
+            ${{ github.workspace }}/target/release/judge-grpc-client*
+            !${{ github.workspace }}/target/release/*.d
