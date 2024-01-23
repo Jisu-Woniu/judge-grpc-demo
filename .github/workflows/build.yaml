@@ -24,13 +24,11 @@ jobs:
         uses: arduino/setup-protoc@v2
       - name: Build
         run: cargo build --release
-      - name: List output directory
-        run: pwd && ls -R ${{ github.workspace }}/target/release/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-release
           path: |
-            ${{ github.workspace }}/target/release/judge-grpc-server*
-            ${{ github.workspace }}/target/release/judge-grpc-client*
+            ${{ github.workspace }}/target/release/server*
+            ${{ github.workspace }}/target/release/client*
             !${{ github.workspace }}/target/release/*.d
