@@ -117,7 +117,7 @@ impl JudgeService for MyJudgeServiceServer {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let addr = SERVER_ADDRESS.into();
-    let server = MyJudgeServiceServer::default();
+    let server = MyJudgeServiceServer;
     println!("Listening on {}", addr);
     Server::builder()
         .add_service(JudgeServiceServer::new(server))

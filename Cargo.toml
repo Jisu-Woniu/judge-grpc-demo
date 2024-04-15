@@ -12,14 +12,14 @@ name = "server"
 name = "client"
 
 [dependencies]
-anyhow = "1.0.80"
-prost = "0.12.3"
-tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread"] }
-tokio-stream = "0.1.14"
+anyhow = "1.0.82"
+prost = "0.12.4"
+tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread"] }
+tokio-stream = "0.1.15"
 tonic = "0.11.0"
 
 [build-dependencies]
-anyhow = "1.0.80"
+anyhow = "1.0.82"
 tonic-build = "0.11.0"
 
 [profile.release]
